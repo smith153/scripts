@@ -4,13 +4,13 @@
 #include <sys/types.h>
 #include <string.h>
 
-
+#define SIZE 10
 
 typedef struct List List;
 
-struct List{
-  int * a;
-  List * next;
+struct List {
+  int *a;
+  struct List *next;
 };
 
 void print_memStats()
@@ -23,18 +23,41 @@ void print_memStats()
 }
 
 
-List * addNode(List ** tail)
+List * addNode(List **tail, List **new)
 {
-
-
+  (*tail)->next = *new;
+  (*new)->next = NULL;
+  return *new;
 }
 
+void print(List * ptr)
+{
+  if(ptr == NULL){
+	return;
+  }
+  while(ptr->next != NULL){
+	printf("%d\n", *(ptr->a));
+	ptr = ptr->next;
+  }
+  return;
+}
 
 int main()
 {
-  List * head;
-   
-  print_memStats();
+  List * head = (List *) malloc(sizeof(List));
+  List * tail = head;
+  List * tmp;
+  int i;
+  
 
+  for(i = 0;i < SIZE; i++){
+	tmp = malloc(sizeof(List));
+	tail  = (List *) addNode(&tail, &tmp);
+  } 
+  
+ 
+  print(head);
+  
+  return 0;
  
 }
