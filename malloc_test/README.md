@@ -9,5 +9,7 @@ Logic is as follows:
 -  Print mem stats  
   
 
-Apparently, userland tools do not report an increase in memory usage when only malloc is called.  
+Apparently (according to the manpages), userland tools do not report an increase in memory usage when only malloc is called.  
 To increase memory usage, one must not only call malloc, but also **write** to that memory space too.
+
+But this script seems to disprove all of that...
