@@ -5,7 +5,10 @@ Results:
 
 Loading LWP::UserAgent
 Before 1000 iterations: Size in kbytes: 8.2744140625
+
 emily     9495 20.0  0.6  28180  5744 pts/10   S+   14:37   0:00 perl test1.pl
+
+
 After iterations: Size in kbytes: 8.3759765625
 emily     9495 72.2  1.2  49800 11176 pts/10   S+   14:37   0:10 perl test1.pl
 Ended after 14 seconds
