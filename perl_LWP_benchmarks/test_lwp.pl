@@ -16,10 +16,10 @@ GetOptions (
 
 my $ref = {
 	"HTTP::Tiny" => {},
-	"LWP::UserAgent" => {cookie_jar => undef, ssl_opts => { verify_hostname => 1 }},
+	"LWP::UserAgent" => {cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
 	#"WWW::Curl" => {},
 	"LWP::Curl" => {},
-	"WWW::Mechanize" => {stack_depth => 0, cookie_jar => undef, ssl_opts => { verify_hostname => 1 }},
+	"WWW::Mechanize" => {stack_depth => 0, cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
 	
 };
 
@@ -35,7 +35,7 @@ sub print_sizes
 
 sub run
 {
-	my ($module, $args_ref )= shift();
+	my ($module, $args_ref )= @_;
 	my $ua;
 	my $response;
 	my $i = 1000;
