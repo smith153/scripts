@@ -15,11 +15,22 @@ GetOptions (
 
 
 my $ref = {
-	"HTTP::Tiny" => {},
-	"LWP::UserAgent" => {cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
-	#"WWW::Curl" => {},
-	"LWP::Curl" => {},
-	"WWW::Mechanize" => {stack_depth => 0, cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
+	"HTTP::Tiny" => [
+		{verify_SSL => 0},
+		sub {my $ref = shift; die Dumper $ref unless $ref->{success};},
+	],
+	"LWP::UserAgent" => [
+		{cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
+		sub {my $ref = shift; die Dumper $ref unless $ref->is_success();},
+	],
+	"LWP::Curl" => [
+		{},
+		sub { my $ref = shift; die Dumper $ref unless $ref;},
+	],
+	"WWW::Mechanize" => [
+		{stack_depth => 0, cookie_jar => undef, ssl_opts => { verify_hostname => 0 }},
+		sub {my $ref = shift; die Dumper $ref unless $ref->is_success();},
+	],
 	
 };
 
@@ -42,11 +53,11 @@ sub run
 	my $sec = time();
 
 	print "Loading $module\n";
-	eval "use $module";
+	eval "require $module";
 	die "dying: $@" if $@;
 
 	
-	$ua = $module->new(%{$args_ref});
+	$ua = $module->new(%{$args_ref->[0]});
 
 	print "Before $i iterations: ";
 	print_sizes($ua);
@@ -54,6 +65,7 @@ sub run
 	while($i--) {
 
 		$response = $ua->get($URL);
+		$args_ref->[1]->($response);
 
 	}
 
