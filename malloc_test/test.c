@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#define SIZE 1000000
+#define SIZE 80000000
 
 typedef struct List List;
 
