@@ -1,0 +1,29 @@
+#! /bin/bash
+
+
+#stop or continue a running process
+
+app=$(echo $0 | cut -d _ -f 2)
+
+if [ -z $app ]; then
+    echo "app name missing or not found running"
+    echo -e "\tUsage: ./stop_<app name>"
+    exit
+fi
+
+echo "Getting all Pids for '$app'"
+for pid in $(pgrep $app); do
+
+    if [ $pid -eq $$ ]; then
+        continue #skip self
+    fi
+
+    if [[ $(ps -p $pid -o state --no-headers) =~ 'T' ]]; then
+        echo "Resuming $pid"
+        kill -CONT $pid
+    else
+        echo "Stopping $pid"
+        kill -STOP $pid
+    fi
+
+done
