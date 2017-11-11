@@ -1,0 +1,91 @@
+My setup:
+mdadm --create /dev/md0 --level=1 --raid-disks=3 missing /dev/sdb1 /dev/sdc1
+mdadm --create /dev/md_d1 --level=5 --chunk=64 --raid-disks=3 missing /dev/sdb2 /dev/sdc2
+mkfs.ext3 -b 4096 -j -m1 -v -E stride=16,stripe-width=32 /dev/md_d1p1
+mkfs.ext3 -b 4096 -j -m1 -v -E stride=16,stripe-width=32 /dev/md_d1p3
+time bonnie++ -d /home/test/ -x3 -n 200:1024:0:256 >> /home/bonnie
+
+
+(after creating the partitions with fdisk)
+mdadm --create /dev/md0 --level=5 --raid-devices=4 /dev/sda1 /dev/
+sdb1 /dev/sdc1 /dev/sdd1
+mkfs.ext3 /dev/md0
+/usr/share/mdadm/mkconf > /etc/mdadm/mdadm.conf
+
+***stats:
+cat /proc/mdstat
+mdadm -D /dev/md0
+
+***Test email
+mdadm --monitor --scan --test
+
+***For failing
+sudo mdadm /dev/md0 --fail /dev/sdc1
+sudo mdadm /dev/md0 --remove /dev/sdc1
+sudo mdadm /dev/md0 --add /dev/sdc1
+
+mdadm --zero-superblock /dev/hdc1 (Clearing previous raid info on a disk (eg. reusing a disk from another decommissioned raid array))) 
+
+
+***copy mbr
+dd if=/dev/sdX of=/dev/sdY count=1 
+
+***Copy partition table
+sfdisk -d /dev/sdb | sfdisk --force /dev/sdc
+
+
+
+*** Grub setup
+Setting up GRUB: (assuming you've already installed it)
+------------------------------------------------------------------
+# grub
+grub> root (hd0,0)
+ Filesystem type is ext2fs, partition type 0xfd
+
+grub> setup (hd0) 
+ Checking if "/boot/grub/stage1" exists... yes
+ Checking if "/boot/grub/stage2" exists... yes
+ Checking if "/boot/grub/e2fs_stage1_5" exists... yes
+ Running "embed /boot/grub/e2fs_stage1_5 (hd0)"...  16 sectors are
+embedded.
+succeeded
+ Running "install /boot/grub/stage1 (hd0) (hd0)1+16 p
+(hd0,0)/boot/grub/stage2 /boot/grub/grub.conf"... succeeded
+Done.
+
+grub> root (hd1,0)
+ Filesystem type is ext2fs, partition type 0xfd
+
+grub> setup (hd1) 
+ Checking if "/boot/grub/stage1" exists... yes
+ Checking if "/boot/grub/stage2" exists... yes
+ Checking if "/boot/grub/e2fs_stage1_5" exists... yes
+ Running "embed /boot/grub/e2fs_stage1_5 (hd1)"...  16 sectors are
+embedded.
+succeeded
+ Running "install /boot/grub/stage1 (hd1) (hd1)1+16 p
+(hd1,0)/boot/grub/stage2 /boot/grub/grub.conf"... succeeded
+Done.
+
+grub> quit
+------------------------------------------------------------------
+Here is how /boot/grub/grub.conf is: (/dev/md0 mounted as /boot)
+(Assuming kernel is installed as /boot/bzImage, and RAID1 support
+compiled into the kernel).
+------------------------------------------------------------------
+# Boot automatically after 30 secs.
+timeout 30
+
+# By default, boot the first entry.
+default 0
+
+# Fallback to the second entry.
+fallback 1
+
+# For booting with disc 0 kernel
+title  GNU/Linux (hd0,0)
+kernel (hd0,0)/bzImage root=/dev/md1
+
+# For booting with disc 1 kernel, if (hd0,0)/bzImage is unreadable
+title  GNU/Linux (hd1,0)
+kernel (hd1,0)/bzImage root=/dev/md1

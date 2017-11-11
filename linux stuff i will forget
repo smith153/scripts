@@ -1,0 +1,192 @@
+***copy
+dd if=/dev/olddrive of=dev/newdrive
+***enable correct browser in thunderbird:
+creat new string:
+network.protocol-handler.app.http iceweasel
+network.protocol-handler.app.https iceweasel
+
+***get sound in thunderbird
+apt-get install esound
+apt-get install esound-clients
+
+*** QOS
+tc -s class show dev eth1
+
+*** view schelduler
+cat /sys/block/hd*/queue/scheduler
+
+*** file benchmark
+time ls -R /
+
+
+
+***SCP
+[admin@deep /]# scp -rp -c blowfish <localdir/to/filelocation> <user@host:/dir/for/file>
+
+***Add user
+adduser <user>
+
+***Delete user
+deluser --remove-home user
+
+***Add user to group
+usermod -a -G group user
+
+***Remove user from group
+gpasswd -d user group
+
+***check user groups
+id
+
+***Change User home directory
+usermod
+
+
+***add user and home dir with no group
+useradd -m user
+
+***Ownership
+chown user:group /file/
+
+
+***Trace
+strace -o /tmp/amule -f amule 
+
+***Lame
+lame -m j -V 9 --vbr-new infile.wav outfile.mp3
+NAME=; nohup lame -m j -V 0 --vbr-new ${NAME}.wav ${NAME}.mp3 &
+NAME=; nohup lame -m j -V 0 --vbr-new ${NAME}.wav ${NAME}.mp3 && mp3gain -r -k -p ${NAME}.mp3 >/dev/null &
+
+***Ogg
+NAME=; nohup oggenc ${NAME}.wav -q 0 -o ${NAME}.ogg &
+
+***preconfigured debian packages
+tasksel --task-packages laptop
+
+
+***Change GCC version:
+export CC=/usr/bin/gcc-4.1
+
+*** making symbolic links:
+ln -s /usr/bin/gcc-4.1 /usr/bin/gcc
+
+
+***Smart tests
+smartctl -t long
+log view -l selftest
+
+***SSH Setup
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_rsa.pub username@mystery
+ssh-copy-id -i ~/.ssh/id_rsa.pub "-p1173 sam@herman"
+
+***Find
+find / -name *.mp3 2> /dev/null
+
+***Compress
+tar cf - directory | 7za a -si -mx=9 directory.tar.7z
+or
+tar -cjf directory.tar.bz2 directory
+tar -c[zj] -ffolder.tar.gz folder1 folder2
+tar -x[zj] -f folder.tar.gz
+tar cvf - file file2 |gzip -9 >names.tar.gz
+
+
+***view unmounted disks
+sudo fdisk -l
+
+***Update rc.d
+update-rc.d script_name defaults  #sends to 0123456
+update-rc.d script_name remove
+
+***size of directory
+du -csh /directory
+
+***Permisssions
+cd /var/www/joomla
+sudo find . -type f -exec chmod 644 {} \;
+sudo find . -type d -exec chmod 755 {} \;
+find /var/lib/squidguard/db -type f | xargs chmod 644
+find /var/lib/squidguard/db -type d | xargs chmod 755
+
+
+***Files with spaces. cp found files to home/music
+find -iname "*.mp3" -print0 |xargs -0 -I {} mv {} /home/music/
+
+***Force FSCK
+ sudo touch /forcefsck
+
+***Convert images
+  'convert' in ImageMagick
+for i in `ls *jpg`; do convert $i -resize 1024x768 a$i; done
+
+***Run with out exit
+nohup ./script &
+
+***Run command as different user
+su - wwalker -c "/home/main.rb"
+
+***Change runlevel to 1
+telinit 1
+
+***For ascii file transfer
+base91
+
+***Delete first 120 lines
+sed 1,120d
+
+***Change a path:
+export PATH=$PATH:/opt/brcm/hndtools-mipsel-uclibc/bin:/opt/brcm/hndtools-mipsel-linux/bin
+
+***Change root during live cd
+# mkdir /sw  
+# mount /dev/hda4 /mnt/root  
+# mount none /mnt/root/proc -t proc  
+# chroot /mnt/root
+
+***Get file to pipe into external program
+find /directory -type f -print0 |xargs -0 externalprogram
+
+***VNC
+vncviewer -bgr233 -compresslevel 9 -quality 0
+
+***Find all wreitable files
+find / -perm -2 -type f -ls 2> /dev/null
+
+***Copy partition table
+sfdisk -d /dev/sdb | sfdisk --force /dev/sdc
+
+*** Find and replace text in a file
+for I in `find -name "*.html"` ; do sed -e "s/foo/bar/g" <$I >$I.new ; mv -f $I.new $I ; done
+*** Find by size
+find / -type f -size +5M  2> /dev/null
+
+***Using Git
+create dir on sever with correct permissions and: 
+git init && git commit -a
+on client, cd to directory and:
+git init && git add . && git commit -a -m "First add" && git push lindsay@net:/location/to/repo master
+vim .git/config
+
+***SSH Tunnel
+local port 5900 to remote 441 
+ssh -p1172 -L 2000:localhost:5900 herman@herman
+ssh -p222 -L 5900:localhost:441 root@smoothwall
+
+***Web rip -D only go down, -r4 max depth
+httrack http://www.cs.web.edu/~m65/home.html -O /home/cc/webrip/ -r4 -D  --ext-depth=0 -T1
+
+***Move 40 smallest files from one dir to another
+n=0; while (( n < 40 )) && IFS=' ' read -r -d '' size name; do ((n++)); echo mv "$name" "/home/"; done < <(find /home/user/MyDocs/stuff/ -type f -printf '%s %p\0' | sort -z -n -r )
+or
+du -cs /home/user/MyDocs/.sounds/music/myMusic/* |sort -n | head -n40|cut -f2|while read LINE; do mv "$LINE" /home/user/MyDocs/.sounds/music/; done
+
+***Laptop netcat backup
+on laptop: dd bs=1M if=/dev/sda |nc 10.36.36.199 50000
+	OR dd bs=1M if=/dev/sda |  tee >(md5sum  -b > sum.md5 ) |   nc 10.36.36.199 50000
+on desktop nc -l -p 50000 | pv -s250G | gzip -2 > pc.img.gz
+	OR nc -l -p 50000 | tee >(md5sum  -b > sum.md5 ) |  pv -s250G > /home/t61.img
+uncompress: zcat > pc.img
+
+***Canon Camera CR2 convert
+dcraw -c -w -g 2.4 12.92  IMG_1899.CR2  | cjpeg > IMG_1899c.jpg
