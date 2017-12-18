@@ -190,3 +190,6 @@ uncompress: zcat > pc.img
 
 ***Canon Camera CR2 convert
 dcraw -c -w -g 2.4 12.92  IMG_1899.CR2  | cjpeg > IMG_1899c.jpg
+
+*** dd rescue
+ddrescue -v  -r 3  -c 16 --min-read-rate=1000000 /dev/sda disk.img mapfile
