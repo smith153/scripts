@@ -1,0 +1,12 @@
+[Unit]
+Description=Monthly ext4 Metadata Check for VM Filesystems
+Documentation=man:e2scrub(8)
+
+[Timer]
+# Run monthly on the first Monday at 6:10 AM
+OnCalendar=Mon *-*-1..7 06:10:00
+RandomizedDelaySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
