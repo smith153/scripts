@@ -5,31 +5,16 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-Environment="SERVICE_MODE=1"
-ExecStart=/usr/local/bin/e2scrub_vm_lv.sh
-SyslogIdentifier=e2scrub_vm
-StandardOutput=journal
-StandardError=journal
-
-# Resource limits
-Nice=10
+WorkingDirectory=/
+PrivateNetwork=true
+ProtectSystem=true
+ProtectHome=read-only
+PrivateTmp=yes
+AmbientCapabilities=CAP_SYS_ADMIN CAP_SYS_RAWIO
+NoNewPrivileges=yes
+User=root
 IOSchedulingClass=idle
 CPUSchedulingPolicy=idle
-
-# Security hardening
-PrivateTmp=yes
-ProtectSystem=strict
-ProtectHome=yes
-PrivateDevices=no
-ProtectKernelTunables=yes
-ProtectKernelModules=yes
-ProtectControlGroups=yes
-RestrictRealtime=yes
-RestrictSUIDSGID=yes
-SystemCallFilter=@system-service
-SystemCallErrorNumber=EPERM
-NoNewPrivileges=yes
-
-# Allow access to LVM and libvirt
-ReadWritePaths=/dev /run/lock/lvm
-SupplementaryGroups=disk libvirt
+Environment=SERVICE_MODE=1
+ExecStart=/usr/local/bin/e2scrub_vm_lv.sh
+SyslogIdentifier=e2scrub_vm
