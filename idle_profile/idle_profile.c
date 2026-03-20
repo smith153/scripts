@@ -9,6 +9,7 @@
 
 #define IDLE_TIMEOUT_SEC (31 * 60)  // 31 minutes
 #define POWER_PROFILE_CMD "/usr/local/bin/power_profile"
+#define AC_POWER_ONLINE_PATH "/sys/class/power_supply/AC/online"
 
 struct app_state {
 	struct wl_display *display;
@@ -28,6 +29,24 @@ static void log_message( const char *msg )
 	strftime( timestr, sizeof( timestr ), "%Y-%m-%d %H:%M:%S", tm_info );
 	printf( "[%s] %s\n", timestr, msg );
 	fflush( stdout );
+}
+
+// Check if laptop is on AC power by reading sysfs
+static bool is_on_ac_power( void )
+{
+	FILE *fp = fopen( AC_POWER_ONLINE_PATH, "r" );
+
+	if( !fp ) {
+		// If we can't read the file, assume AC power (safe default for desktops
+		// or systems where the path doesn't exist)
+		log_message( "Warning: Unable to read AC power status, assuming AC power." );
+		return true;
+	}
+
+	int val = fgetc( fp );
+	fclose( fp );
+
+	return ( val == '1' );
 }
 
 // Power profile control
@@ -63,9 +82,15 @@ static void idle_notification_resumed( void *data,
 	( void )notification; // Unused
 
 	if( state->is_idle ) {
-		log_message( "System is active. Setting performance profile." );
-		set_power_profile( "performance" );
 		state->is_idle = false;
+
+		if( is_on_ac_power() ) {
+			log_message( "System is active (on AC). Setting performance profile." );
+			set_power_profile( "performance" );
+		}
+		else {
+			log_message( "System is active (on battery). Skipping performance profile." );
+		}
 	}
 }
 

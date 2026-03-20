@@ -1,0 +1,10 @@
+[Unit]
+Description=Power Idle Profile Manager
+After=plasma-workspace.target
+
+[Service]
+ExecStart=/home/user/bin/idle_profile
+Restart=always
+
+[Install]
+WantedBy=plasma-workspace.target
